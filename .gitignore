@@ -1,2 +1,22 @@
-*.class
+# --- Frontend (React/Vite) Junk ---
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# --- Backend (Java Spring Boot) Junk ---
+backend/target/
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+
+# --- Old Terminal App Junk ---
+old_terminal_app/*.class
+
+# --- Database / Personal Data ---
 hardware_inventory.csv
+
+# --- General System/Editor Junk ---
+.vscode/
+.idea/
+.DS_Store
+*.log
