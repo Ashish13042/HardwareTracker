@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./App.css";
 
 interface Device {
   type: string;
@@ -11,20 +11,20 @@ interface Device {
 function App() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [isLoading, setIsLoading] = useState(true); // FIX: Separate loading state
-  
-  const [type, setType] = useState('');
-  const [brand, setBrand] = useState('');
-  const [model, setModel] = useState('');
-  const [ramInput, setRamInput] = useState('');
+
+  const [type, setType] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [ramInput, setRamInput] = useState("");
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/devices')
-      .then(response => response.json())
-      .then(data => {
+    fetch("http://localhost:8080/api/devices")
+      .then((response) => response.json())
+      .then((data) => {
         setDevices(data);
         setIsLoading(false); // Done loading, even if the list is empty
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching data:", error);
         setIsLoading(false);
       });
@@ -35,27 +35,30 @@ function App() {
     // FIX: Send the payload using the 'ram' property name
     const newDevice = { type, brand, model, ram: parseInt(ramInput) };
 
-    fetch('http://localhost:8080/api/devices', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newDevice)
+    fetch("http://localhost:8080/api/devices", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newDevice),
     })
-    .then(response => response.json())
-    .then(savedDevice => {
-      setDevices([...devices, savedDevice]);
-      setType(''); setBrand(''); setModel(''); setRamInput('');
-    })
-    .catch(error => console.error("Error saving device:", error));
+      .then((response) => response.json())
+      .then((savedDevice) => {
+        setDevices([...devices, savedDevice]);
+        setType("");
+        setBrand("");
+        setModel("");
+        setRamInput("");
+      })
+      .catch((error) => console.error("Error saving device:", error));
   };
 
   const handleExportCSV = () => {
     let csvContent = "Type,Brand,Model,RAM (GB)\n";
     // FIX: Use device.ram here
-    devices.forEach(device => {
+    devices.forEach((device) => {
       csvContent += `${device.type},${device.brand},${device.model},${device.ram}\n`;
     });
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
@@ -64,19 +67,70 @@ function App() {
     link.click();
     document.body.removeChild(link);
   };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("http://localhost:8080/api/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((newData) => {
+        setDevices(newData);
+        alert("✅ Database successfully overwritten with new file!");
+      })
+      .catch((error) => console.error("Error uploading file:", error));
+  };
 
   return (
     <div className="app-container">
       <div className="header-container">
         <h1>IT Hardware Inventory Dashboard</h1>
-        <button onClick={handleExportCSV} className="export-btn">⬇️ Export to Excel</button>
+        
+        <div className="button-group">
+          {/* THE NEW DRAG & DROP UPLOAD BUTTON */}
+          <label className="upload-btn">
+            ⬆️ Upload CSV
+            <input type="file" accept=".csv" onChange={handleFileUpload} style={{ display: 'none' }} />
+          </label>
+
+          <button onClick={handleExportCSV} className="export-btn">⬇️ Export to Excel</button>
+        </div>
       </div>
-      
+
       <form onSubmit={handleAddDevice} className="device-form">
-        <input type="text" placeholder="Type (e.g., Switch, Laptop)" value={type} onChange={e => setType(e.target.value)} required />
-        <input type="text" placeholder="Brand (e.g., Cisco)" value={brand} onChange={e => setBrand(e.target.value)} required />
-        <input type="text" placeholder="Model" value={model} onChange={e => setModel(e.target.value)} required />
-        <input type="number" placeholder="RAM (GB)" value={ramInput} onChange={e => setRamInput(e.target.value)} required />
+        <input
+          type="text"
+          placeholder="Type (e.g., Switch, Laptop)"
+          value={type}
+          onChange={(e) => setType(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Brand (e.g., Cisco)"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Model"
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          required
+        />
+        <input
+          type="number"
+          placeholder="RAM (GB)"
+          value={ramInput}
+          onChange={(e) => setRamInput(e.target.value)}
+          required
+        />
         <button type="submit">Add Device</button>
       </form>
 
@@ -109,7 +163,7 @@ function App() {
         </table>
       )}
     </div>
-  )
+  );
 }
 
 export default App;
