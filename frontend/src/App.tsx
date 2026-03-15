@@ -5,12 +5,12 @@ interface Device {
   type: string;
   brand: string;
   model: string;
-  ram: number; // FIX: Changed from ramGB to ram to match Java backend exactly
+  ram: number;
 }
 
 function App() {
   const [devices, setDevices] = useState<Device[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // FIX: Separate loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   const [type, setType] = useState("");
   const [brand, setBrand] = useState("");
@@ -25,24 +25,20 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setDevices(data);
-        setIsLoading(false); // Done loading, even if the list is empty
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
         setIsLoading(false);
       });
   }, []);
- // Extract unique types for the first dropdown
-  const uniqueTypes = ['All', ...Array.from(new Set(devices.map(d => d.type)))];
 
-  // THE SMART BRAND LIST: First, filter the devices by the selected Type. 
-  // Then, extract the brands ONLY from those specific devices!
+  const uniqueTypes = ['All', ...Array.from(new Set(devices.map(d => d.type)))];
   const validDevicesForType = filterType === 'All' ? devices : devices.filter(d => d.type === filterType);
   const uniqueBrands = ['All', ...Array.from(new Set(validDevicesForType.map(d => d.brand)))];
 
   const handleAddDevice = (e: React.FormEvent) => {
     e.preventDefault();
-    // FIX: Send the payload using the 'ram' property name
     const newDevice = { type, brand, model, ram: parseInt(ramInput) };
 
     fetch("http://localhost:8080/api/devices", {
@@ -63,7 +59,6 @@ function App() {
 
   const handleExportCSV = () => {
     let csvContent = "Type,Brand,Model,RAM (GB)\n";
-    // FIX: Use device.ram here
     devices.forEach((device) => {
       csvContent += `${device.type},${device.brand},${device.model},${device.ram}\n`;
     });
@@ -77,6 +72,7 @@ function App() {
     link.click();
     document.body.removeChild(link);
   };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -95,34 +91,33 @@ function App() {
       })
       .catch((error) => console.error("Error uploading file:", error));
   };
-  // THE INSTANT SEARCH LOGIC
-  // THE UPGRADED MULTI-FILTER LOGIC
-const filteredDevices = devices.filter(device => {
-  // 1. Check the text search
-  const searchLower = searchTerm.toLowerCase();
-  const matchesSearch = 
-    device.type.toLowerCase().includes(searchLower) ||
-    device.brand.toLowerCase().includes(searchLower) ||
-    device.model.toLowerCase().includes(searchLower) ||
-    device.ram.toString().includes(searchLower);
 
-  // 2. Check the dropdowns
-  const matchesType = filterType === 'All' || device.type === filterType;
-  const matchesBrand = filterBrand === 'All' || device.brand === filterBrand;
+  const filteredDevices = devices.filter(device => {
+    const searchLower = searchTerm.toLowerCase();
+    const matchesSearch = 
+      device.type.toLowerCase().includes(searchLower) ||
+      device.brand.toLowerCase().includes(searchLower) ||
+      device.model.toLowerCase().includes(searchLower) ||
+      device.ram.toString().includes(searchLower);
 
-  // 3. Only show the row if it passes all tests!
-  return matchesSearch && matchesType && matchesBrand;
-});
+    const matchesType = filterType === 'All' || device.type === filterType;
+    const matchesBrand = filterBrand === 'All' || device.brand === filterBrand;
+
+    return matchesSearch && matchesType && matchesBrand;
+  });
 
   return (
     <div className="app-container">
+      {/* Header */}
       <div className="header-container">
-        <h1>IT Hardware Inventory Dashboard</h1>
-
-        <div className="button-group">
-          {/* THE NEW DRAG & DROP UPLOAD BUTTON */}
-          <label className="upload-btn">
-            ⬆️ Upload CSV
+        <div className="header-title-group">
+          <h1>Hardware Tracker</h1>
+          <p>Manage and monitor your enterprise IT hardware inventory</p>
+        </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <label className="btn btn-secondary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            Upload CSV
             <input
               type="file"
               accept=".csv"
@@ -130,106 +125,159 @@ const filteredDevices = devices.filter(device => {
               style={{ display: "none" }}
             />
           </label>
-
-          <button onClick={handleExportCSV} className="export-btn">
-            ⬇️ Export to Excel
+          <button onClick={handleExportCSV} className="btn btn-secondary">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Export
           </button>
         </div>
       </div>
 
-      <form onSubmit={handleAddDevice} className="device-form">
-        <input
-          type="text"
-          placeholder="Type (e.g., Switch, Laptop)"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Brand (e.g., Cisco)"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Model"
-          value={model}
-          onChange={(e) => setModel(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="RAM (GB)"
-          value={ramInput}
-          onChange={(e) => setRamInput(e.target.value)}
-          required
-        />
-        <button type="submit">Add Device</button>
-      </form>
-      {/* SEARCH AND FILTER BAR */}
-      <div className="search-filter-container">
-        <input 
-          type="text" 
-          placeholder="🔍 Search inventory..." 
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-        
-        <select 
-          value={filterType} 
-          onChange={e => {
-            setFilterType(e.target.value); // Update the Type
-            setFilterBrand('All');         // Instantly reset the Brand!
-          }}
-          className="filter-dropdown"
-        >
-          {uniqueTypes.map(type => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
-
-        <select 
-          value={filterBrand} 
-          onChange={e => setFilterBrand(e.target.value)}
-          className="filter-dropdown"
-        >
-          {uniqueBrands.map(brand => (
-            <option key={brand} value={brand}>{brand}</option>
-          ))}
-        </select>
+      {/* Form Card */}
+      <div className="card form-card">
+        <h2>Add New Device</h2>
+        <form onSubmit={handleAddDevice} className="device-form">
+          <div className="input-group">
+            <label className="input-label">Type</label>
+            <input
+              type="text"
+              placeholder="e.g. Laptop, Switch"
+              className="form-input"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label className="input-label">Brand</label>
+            <input
+              type="text"
+              placeholder="e.g. Cisco, Apple"
+              className="form-input"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label className="input-label">Model</label>
+            <input
+              type="text"
+              placeholder="e.g. Catalyst 9300"
+              className="form-input"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label className="input-label">RAM (GB)</label>
+            <input
+              type="number"
+              placeholder="e.g. 16"
+              className="form-input"
+              value={ramInput}
+              onChange={(e) => setRamInput(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" style={{ height: "46px" }}>
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+            Add Device
+          </button>
+        </form>
       </div>
 
-      {/* FIX: Check the actual loading state, not just array length */}
-      {isLoading ? (
-        <p>Loading devices from Java server...</p>
-      ) : devices.length === 0 ? (
-        <p>No devices found. Add one above!</p>
-      ) : (
-        <table className="device-table">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Brand</th>
-              <th>Model</th>
-              <th>RAM (GB)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDevices.map((device, index) => (
-              <tr key={index}>
-                <td>{device.type}</td>
-                <td>{device.brand}</td>
-                <td>{device.model}</td>
-                {/* FIX: Display device.ram */}
-                <td>{device.ram}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      {/* Table Card */}
+      <div className="card table-card">
+        <div className="table-header">
+          <div className="table-header-top">
+            <h2>Inventory List</h2>
+          </div>
+          <div className="controls-container">
+            <div className="search-bar">
+              <span className="search-icon">🔍</span>
+              <input 
+                type="text" 
+                placeholder="Search inventory..." 
+                className="form-input"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+            
+            <div className="filter-group">
+              <select 
+                value={filterType} 
+                className="form-input"
+                onChange={e => {
+                  setFilterType(e.target.value);
+                  setFilterBrand('All');
+                }}
+              >
+                {uniqueTypes.map(t => (
+                  <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="filter-group">
+              <select 
+                value={filterBrand} 
+                className="form-input"
+                onChange={e => setFilterBrand(e.target.value)}
+              >
+                {uniqueBrands.map(b => (
+                  <option key={b} value={b}>{b === 'All' ? 'All Brands' : b}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className="state-message">
+            <span className="emoji">⏳</span>
+            Loading devices from server...
+          </div>
+        ) : devices.length === 0 ? (
+          <div className="state-message">
+            <span className="emoji">📦</span>
+            No devices found in inventory.
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="device-table">
+              <thead>
+                <tr>
+                  <th>Device Type</th>
+                  <th>Brand</th>
+                  <th>Model Name</th>
+                  <th>RAM (GB)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredDevices.map((device, index) => (
+                  <tr key={index}>
+                    <td><strong>{device.type}</strong></td>
+                    <td><span className="brand-badge">{device.brand}</span></td>
+                    <td>{device.model}</td>
+                    <td>{device.ram} GB</td>
+                  </tr>
+                ))}
+                {filteredDevices.length === 0 && devices.length > 0 && (
+                  <tr>
+                    <td colSpan={4}>
+                      <div className="state-message" style={{ padding: '20px' }}>
+                        No results match your filters.
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
