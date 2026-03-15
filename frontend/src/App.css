@@ -26,12 +26,19 @@ body {
 
 /* App Container */
 .app-container {
-  max-width: 1200px;
+  max-width: 95%;
   margin: 0 auto;
   padding: 2.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+.table-responsive-wrapper {
+  width: 100%;
+  overflow-x: auto; /* Adds the horizontal scrollbar ONLY if needed */
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Moved the shadow here */
+  border-radius: 8px;
 }
 
 /* Header Section */
@@ -244,6 +251,8 @@ body {
 .device-table {
   width: 100%;
   border-collapse: collapse;
+  white-space: nowrap;
+  min-width: 1000px;
 }
 
 .device-table th {

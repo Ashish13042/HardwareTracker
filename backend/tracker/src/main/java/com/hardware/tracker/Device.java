@@ -1,36 +1,27 @@
 package com.hardware.tracker;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Device {
-    private String type;
-    private String brand;
-    private String model;
-    private int ram;
+    private Map<String, Object> properties = new LinkedHashMap<>();
 
-    public Device(String type, String brand, String model, int ram) {
-        this.type = type;
-        this.brand = brand;
-        this.model = model;
-        this.ram = ram;
+    @JsonAnyGetter
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
-    public String getDetails() {
-        return brand + " " + model + " (" + type + ") - " + ram + "GB RAM";
+    @JsonAnySetter
+    public void setProperty(String key, Object value) {
+        properties.put(key, value);
     }
-    public String getType(){
-        return type;
-    }
-    public String getBrand(){
-        return brand;
-    }
-    public String getModel(){
-        return model;
-    }
-    public int getRam(){
-        return ram;
-    }
+
+    public Device() {}
 
     @Override
     public String toString() {
-        return type + ": " + brand + " " + model + " (" + ram + "GB RAM)";
+        return properties.toString();
     }
 }
