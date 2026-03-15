@@ -95,3 +95,38 @@ h1 {
 .device-form button:hover {
   background-color: #27ae60;
 }
+.search-filter-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.search-input {
+  flex: 2;
+  padding: 10px 15px;
+  border: 2px solid #3498db;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #2980b9;
+}
+
+.filter-dropdown {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #bdc3c7;
+  border-radius: 6px;
+  background-color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.filter-dropdown:focus {
+  border-color: #3498db;
+  outline: none;
+}
+

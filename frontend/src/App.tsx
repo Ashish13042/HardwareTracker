@@ -16,6 +16,9 @@ function App() {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [ramInput, setRamInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("All");
+  const [filterBrand, setFilterBrand] = useState("All");
 
   useEffect(() => {
     fetch("http://localhost:8080/api/devices")
@@ -29,6 +32,13 @@ function App() {
         setIsLoading(false);
       });
   }, []);
+ // Extract unique types for the first dropdown
+  const uniqueTypes = ['All', ...Array.from(new Set(devices.map(d => d.type)))];
+
+  // THE SMART BRAND LIST: First, filter the devices by the selected Type. 
+  // Then, extract the brands ONLY from those specific devices!
+  const validDevicesForType = filterType === 'All' ? devices : devices.filter(d => d.type === filterType);
+  const uniqueBrands = ['All', ...Array.from(new Set(validDevicesForType.map(d => d.brand)))];
 
   const handleAddDevice = (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,20 +95,45 @@ function App() {
       })
       .catch((error) => console.error("Error uploading file:", error));
   };
+  // THE INSTANT SEARCH LOGIC
+  // THE UPGRADED MULTI-FILTER LOGIC
+const filteredDevices = devices.filter(device => {
+  // 1. Check the text search
+  const searchLower = searchTerm.toLowerCase();
+  const matchesSearch = 
+    device.type.toLowerCase().includes(searchLower) ||
+    device.brand.toLowerCase().includes(searchLower) ||
+    device.model.toLowerCase().includes(searchLower) ||
+    device.ram.toString().includes(searchLower);
+
+  // 2. Check the dropdowns
+  const matchesType = filterType === 'All' || device.type === filterType;
+  const matchesBrand = filterBrand === 'All' || device.brand === filterBrand;
+
+  // 3. Only show the row if it passes all tests!
+  return matchesSearch && matchesType && matchesBrand;
+});
 
   return (
     <div className="app-container">
       <div className="header-container">
         <h1>IT Hardware Inventory Dashboard</h1>
-        
+
         <div className="button-group">
           {/* THE NEW DRAG & DROP UPLOAD BUTTON */}
           <label className="upload-btn">
             ⬆️ Upload CSV
-            <input type="file" accept=".csv" onChange={handleFileUpload} style={{ display: 'none' }} />
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
           </label>
 
-          <button onClick={handleExportCSV} className="export-btn">⬇️ Export to Excel</button>
+          <button onClick={handleExportCSV} className="export-btn">
+            ⬇️ Export to Excel
+          </button>
         </div>
       </div>
 
@@ -133,6 +168,39 @@ function App() {
         />
         <button type="submit">Add Device</button>
       </form>
+      {/* SEARCH AND FILTER BAR */}
+      <div className="search-filter-container">
+        <input 
+          type="text" 
+          placeholder="🔍 Search inventory..." 
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+        
+        <select 
+          value={filterType} 
+          onChange={e => {
+            setFilterType(e.target.value); // Update the Type
+            setFilterBrand('All');         // Instantly reset the Brand!
+          }}
+          className="filter-dropdown"
+        >
+          {uniqueTypes.map(type => (
+            <option key={type} value={type}>{type}</option>
+          ))}
+        </select>
+
+        <select 
+          value={filterBrand} 
+          onChange={e => setFilterBrand(e.target.value)}
+          className="filter-dropdown"
+        >
+          {uniqueBrands.map(brand => (
+            <option key={brand} value={brand}>{brand}</option>
+          ))}
+        </select>
+      </div>
 
       {/* FIX: Check the actual loading state, not just array length */}
       {isLoading ? (
@@ -150,7 +218,7 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {devices.map((device, index) => (
+            {filteredDevices.map((device, index) => (
               <tr key={index}>
                 <td>{device.type}</td>
                 <td>{device.brand}</td>
