@@ -96,6 +96,11 @@ function App() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // --- THE MAGIC FIX ---
+    // Instantly wipe the browser's memory of the file name
+    // so it allows you to upload the exact same file again later!
+    e.target.value = '';
+
     const uploadData = new FormData();
     uploadData.append("file", file);
 
