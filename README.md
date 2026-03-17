@@ -47,9 +47,3 @@ sequenceDiagram
 - **Backend**: Spring Boot 4.0.3, Java 21
 - **Storage**: CSV (Pseudo-Database)
 - **Communication**: REST API (JSON via Jackson)
-
-## 🏃 Running the Project
-
-1. Run `Start_Hardware_Tracker.bat` in the root directory to start both backend and frontend.
-2. The frontend should be available at `http://localhost:5173`.
-3. The backend API is at `http://localhost:8080/api`.
