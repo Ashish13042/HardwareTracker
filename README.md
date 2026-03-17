@@ -1,12 +1,14 @@
 # 🛠️ HardwareTracker
 
-A modern, streamlined IT hardware inventory management system built with **Next.js**, **React**, and **TypeScript**. Focus on simplicity, flexibility, and lightning-fast performance.
+A modern, streamlined IT hardware inventory management system built with **Next.js**, **React**, and **TypeScript**. 
+
+Developed to help organizations manage their hardware assets more effectively than traditional spreadsheets. Unlike Excel, where searching and filtering can be inaccurate due to strict case sensitivity, HardwareTracker provides a robust, user-friendly interface for reliable data management.
 
 ## ✨ Key Features
 
 - **Dynamic Inventory Management**: Add, rename, or delete columns on the fly to fit your specific hardware tracking needs.
 - **CSV-Powered Storage**: Lightweight data management using a local `hardware_inventory.csv` file—no complex database setup required.
-- **Instant Search & Filtering**: Real-time filtering by device type, brand, or total text search to find what you need in seconds.
+- **Case-Insensitive Search & Filtering**: Real-time, smart filtering that finds what you need regardless of capitalization—solving the accuracy issues common in Excel.
 - **CSV Import/Export**: Seamlessly migrate data between the tool and your favorite spreadsheet software.
 - **Responsive Design**: A clean, professional UI that handles large inventories with ease.
 
