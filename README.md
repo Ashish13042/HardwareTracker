@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛠️ HardwareTracker
 
-## Getting Started
+A modern, streamlined IT hardware inventory management system built with **Next.js**, **React**, and **TypeScript**. Focus on simplicity, flexibility, and lightning-fast performance.
 
-First, run the development server:
+## ✨ Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Dynamic Inventory Management**: Add, rename, or delete columns on the fly to fit your specific hardware tracking needs.
+- **CSV-Powered Storage**: Lightweight data management using a local `hardware_inventory.csv` file—no complex database setup required.
+- **Instant Search & Filtering**: Real-time filtering by device type, brand, or total text search to find what you need in seconds.
+- **CSV Import/Export**: Seamlessly migrate data between the tool and your favorite spreadsheet software.
+- **Responsive Design**: A clean, professional UI that handles large inventories with ease.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Frontend**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+- **Data Persistence**: CSV via Node.js File System (FS)
+- **Styling**: Vanilla CSS with modern flex/grid layouts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+- [Node.js](https://nodejs.org/) (Version 18 or higher recommended)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Ashish13042/HardwareTracker.git
+   cd HardwareTracker
+   ```
 
-## Deploy on Vercel
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Access the app**:
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📂 Project Structure
+
+- `/src/app`: Next.js pages and API routes.
+- `/src/lib`: Core logic for CSV parsing and data handling.
+- `/public`: Static assets and icons.
+- `hardware_inventory.csv`: The local database for your inventory.
+
+## 📖 Usage Tip
+
+To start fresh, you can use the **"Clear All Data"** button in the dashboard, or simply delete the `hardware_inventory.csv` file—the app will recreate a fresh template automatically on the next launch!
+
+---
+
+*Easily track what matters with HardwareTracker.*
