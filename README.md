@@ -48,17 +48,6 @@ sequenceDiagram
 - **Storage**: CSV (Pseudo-Database)
 - **Communication**: REST API (JSON via Jackson)
 
-## 💡 How to use the Diagram in GitHub
-
-GitHub supports Mermaid diagrams natively. To ensure the diagram shows up correctly:
-
-1. Copy the block starting with ` ```mermaid ` and ending with ` ``` `.
-2. Paste it into your `README.md` file.
-3. GitHub will automatically render it into a visual diagram.
-
-> [!TIP]
-> If you are seeing plain text instead of a diagram, make sure there are no spaces before the backticks (```) and that the word `mermaid` follows the first set of backticks immediately.
-
 ## 🏃 Running the Project
 
 1. Run `Start_Hardware_Tracker.bat` in the root directory to start both backend and frontend.
