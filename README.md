@@ -2,6 +2,8 @@
 
 A flexible hardware inventory management system with a dynamic schema backend.
 
+This is the second version of project where the backend is completely written on JAVA Springboot.
+
 ## 🚀 Overview
 
 HardwareTracker is designed to manage hardware inventory without being restricted by a rigid database schema. The backend uses a CSV-based storage system that allows users to add, rename, and delete columns on the fly.
